@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="Scripts/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+    <h3>MoT testing web api</h3>
+    <br />
+
+    <input type="text" id="searchId" value="" />
+    <br /><br />
+    <button onclick="searchContact()"> Search! </button>
+    <br /><br />
+    <input type="text" id="foundContact" value="" />
+    <br /><br />
+    <button onclick="addContact()"> Add Contact </button>
+    <br /><br />
+    <button onclick="alterContact()"> Alter Contact </button>
+    <br /><br />
+    <button onclick="deleteContact()"> Delete Contact </button>
+    <br /><br />
+    <button onclick="searchWithName()"> Search with name </button>
+    
+
+    <script type="text/javascript">
+
+
+        /* GET Method invoked from controller*/
+        $(document).ready(function () {
+         // $.getJSON("api/Contact", function (result) {            --> before EntityFramework
+            $.getJSON("api/ContactEF", function (result){        //--> after EntitiyFramework
+                console.info(result);
+            });
+        });
+
+        /*GET Specific contact using id*/
+        function searchContact() {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                //url: "api/Contact/" + $('#searchId').val(),   -->> this is the template route kind of direction
+                url: "api/Contact/" + $('#searchId').val(),       //  this is the new custome template route kind of direction
+                success: function (result) {
+                    console.info(result);
+                    //debugger;
+                    $('#foundContact').val(result.Id + " - " + result.FirstName + " " + result.LastName);
+                }
+            });
+        }
+
+        /*POST Method to add a new contact*/
+        function addContact() {
+
+            //constant contact
+            var newContact = {
+                "Id": 0,
+                "FirstName": "Tom",
+                "LastName": "Jerry"
+            };
+
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+               // url: "api/Contact/",         --> before EntityFramework
+                url: "api/ContactEF/",      // --> after EntityFramework
+                data: newContact,
+                success: function (result) {
+                    console.info(result);
+                    $('#foundContact').val("New Contact Added");
+                }
+            });
+        }
+
+        /*PUT Method to alter a contact*/
+        function alterContact() {
+            //new contact
+            var newContact = {
+                "Id": 5,
+                "FirstName": "Steve",
+                "Lastname": "Rogers"
+            };
+
+            //type is PUT
+
+            $.ajax({
+                type: "PUT",
+                dataType: "json",
+                url: "api/Contact/0",
+                data: newContact,
+                success: function (result) {
+                    console.info(result);
+                    $('#foundContact').val("Captain Added");
+                }
+            });
+
+        }
+
+        /*DELETE Method to remove a contact*/
+        function deleteContact() {
+
+            //type is DELETE
+
+            $.ajax({
+                type: "DELETE",
+                dataType: "json",
+                url: "api/Contact/" + $('#searchId').val(),
+                success: function (result) {
+                    console.info(result);
+                    $('#foundContact').val($('#searchId').val() + " id contact deleted");
+                }
+            });
+
+        }
+
+        function searchWithName() {
+
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "api/Contact?name=" + $('#searchId').val(),
+                success: function (result) {
+                    console.info(result);
+                    $('#foundContact').val("Found!!!");
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
